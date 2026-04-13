@@ -2,16 +2,17 @@
  * FormComponent
  *
  * Mirrors Angular's @Component pattern:
- * - template() method returns HTML string (like Angular templates)
- * - render() acts as change detection cycle
- * - Services are injected via constructor
- * - Event binding via data attributes + delegated listeners
+ * - template() for initial render only
+ * - patch() for targeted change detection (no DOM destruction)
+ * - Services injected via constructor
+ * - Event delegation bound once, survives across patches
  */
 export class FormComponent {
   constructor(formService) {
     this.formService = formService;
     this.container = null;
     this.submittedData = null;
+    this._bound = false;
 
     // Register form fields with validators
     this.formService.registerField('name', ['required']);
@@ -24,10 +25,10 @@ export class FormComponent {
   }
 
   /**
-   * Component template — mirrors Angular's inline template.
+   * Full template — only used for initial render.
    */
   template() {
-    const { fields, isValid } = this.formService;
+    const { fields } = this.formService;
 
     const fieldHTML = (name, type = 'text', placeholder = '') => {
       const f = fields[name];
@@ -35,40 +36,30 @@ export class FormComponent {
       const isTextarea = type === 'textarea';
 
       return `
-        <div class="ang-form-group">
+        <div class="ang-form-group" data-group="${name}">
           <label class="ang-label">${name}</label>
           ${
             isTextarea
               ? `<textarea
-                  class="ang-input ${hasError ? 'invalid' : ''}"
+                  class="ang-input${hasError ? ' invalid' : ''}"
                   data-field="${name}"
                   rows="4"
                   placeholder="${placeholder}"
                 >${f.value}</textarea>`
               : `<input
-                  class="ang-input ${hasError ? 'invalid' : ''}"
+                  class="ang-input${hasError ? ' invalid' : ''}"
                   data-field="${name}"
                   type="${type}"
                   value="${f.value}"
                   placeholder="${placeholder}"
                 />`
           }
-          ${hasError ? `<div class="ang-error">⚠ ${f.errors[0]}</div>` : ''}
+          <div class="ang-error-slot" data-error-for="${name}">
+            ${hasError ? `<div class="ang-error">⚠ ${f.errors[0]}</div>` : ''}
+          </div>
         </div>
       `;
     };
-
-    const submittedHTML = this.submittedData
-      ? `
-        <div class="ang-result">
-          <div class="ang-result-title">✓ Form Submitted Successfully</div>
-          <div class="ang-result-row"><span class="ang-result-key">name:</span> "${this.submittedData.name}"</div>
-          <div class="ang-result-row"><span class="ang-result-key">email:</span> "${this.submittedData.email}"</div>
-          <div class="ang-result-row"><span class="ang-result-key">subject:</span> "${this.submittedData.subject}"</div>
-          <div class="ang-result-row"><span class="ang-result-key">message:</span> "${this.submittedData.message}"</div>
-        </div>
-      `
-      : '';
 
     return `
       <div class="angular-app">
@@ -93,12 +84,13 @@ export class FormComponent {
             <button
               class="ang-submit"
               id="ang-submit-btn"
-              ${isValid ? '' : 'disabled'}
+              ${this.formService.isValid ? '' : 'disabled'}
+              style="opacity:${this.formService.isValid ? '1' : '0.3'}"
             >
               Submit Form
             </button>
 
-            ${submittedHTML}
+            <div id="ang-result-slot"></div>
           </div>
 
           <div class="card">
@@ -107,36 +99,12 @@ export class FormComponent {
 
             <div class="ang-services-grid">
               ${[
-                {
-                  icon: '⚙',
-                  name: 'ValidationService',
-                  desc: 'Reusable validation rules (required, email, minLength)',
-                },
-                {
-                  icon: '📋',
-                  name: 'FormService',
-                  desc: 'Reactive form state, mirrors ReactiveFormsModule',
-                },
-                {
-                  icon: '💉',
-                  name: 'Dependency Injection',
-                  desc: 'Services injected into component constructor',
-                },
-                {
-                  icon: '🔄',
-                  name: 'Change Detection',
-                  desc: 'Re-render on state mutation via onChange()',
-                },
-                {
-                  icon: '🧩',
-                  name: 'Component Pattern',
-                  desc: 'template() + render() + lifecycle hooks',
-                },
-                {
-                  icon: '📦',
-                  name: 'Module Federation',
-                  desc: 'Exposed as remote entry for shell loading',
-                },
+                { icon: '⚙', name: 'ValidationService', desc: 'Reusable validation rules (required, email, minLength)' },
+                { icon: '📋', name: 'FormService', desc: 'Reactive form state, mirrors ReactiveFormsModule' },
+                { icon: '💉', name: 'Dependency Injection', desc: 'Services injected into component constructor' },
+                { icon: '🔄', name: 'Change Detection', desc: 'Targeted DOM patching on state change' },
+                { icon: '🧩', name: 'Component Pattern', desc: 'template() + patch() + lifecycle hooks' },
+                { icon: '📦', name: 'Module Federation', desc: 'Exposed as remote entry for shell loading' },
               ]
                 .map(
                   (s) => `
@@ -156,21 +124,9 @@ export class FormComponent {
               <div class="card-title" style="margin-top:1.5rem;margin-bottom:0.8rem;font-size:0.85rem">
                 Live Form State
               </div>
-              ${Object.entries(fields)
-                .map(
-                  ([name, f]) => `
-                <div class="ang-state-row">
-                  <span class="ang-state-field">${name}</span>
-                  <span class="ang-state-badge ${f.touched ? 'touched' : ''}">
-                    ${f.touched ? 'touched' : 'pristine'}
-                  </span>
-                  <span class="ang-state-badge ${f.errors.length === 0 && f.touched ? 'valid' : 'invalid-badge'}">
-                    ${f.errors.length === 0 && f.touched ? 'valid' : f.errors.length > 0 ? 'invalid' : 'pending'}
-                  </span>
-                </div>
-              `
-                )
-                .join('')}
+              <div id="ang-state-display">
+                ${this._renderStateRows()}
+              </div>
             </div>
           </div>
         </div>
@@ -179,43 +135,102 @@ export class FormComponent {
   }
 
   /**
-   * Render the component into its container (change detection cycle).
+   * Render the form state badges.
    */
-  render() {
+  _renderStateRows() {
+    return Object.entries(this.formService.fields)
+      .map(
+        ([name, f]) => `
+        <div class="ang-state-row">
+          <span class="ang-state-field">${name}</span>
+          <span class="ang-state-badge ${f.touched ? 'touched' : ''}">
+            ${f.touched ? 'touched' : 'pristine'}
+          </span>
+          <span class="ang-state-badge ${f.errors.length === 0 && f.touched ? 'valid' : 'invalid-badge'}">
+            ${f.errors.length === 0 && f.touched ? 'valid' : f.errors.length > 0 ? 'invalid' : 'pending'}
+          </span>
+        </div>
+      `
+      )
+      .join('');
+  }
+
+  /**
+   * TARGETED DOM PATCH — updates only the parts that changed.
+   * Inputs are never destroyed, so focus and cursor position are preserved.
+   */
+  patch() {
     if (!this.container) return;
 
-    // Save scroll position and focused element
-    const focusedField = document.activeElement?.dataset?.field;
-    const cursorPos = document.activeElement?.selectionStart;
+    const { fields } = this.formService;
 
-    this.container.innerHTML = this.template();
+    // 1. Patch each field's error state and CSS class
+    Object.entries(fields).forEach(([name, f]) => {
+      const input = this.container.querySelector(`[data-field="${name}"]`);
+      if (!input) return;
 
-    // Bind input events (delegated)
-    this.container.querySelectorAll('.ang-input').forEach((input) => {
-      input.addEventListener('input', (e) => {
-        this.formService.setValue(e.target.dataset.field, e.target.value);
-      });
-      input.addEventListener('blur', (e) => {
-        this.formService.markTouched(e.target.dataset.field);
-      });
+      const hasError = f.touched && f.errors.length > 0;
+
+      if (hasError) {
+        input.classList.add('invalid');
+      } else {
+        input.classList.remove('invalid');
+      }
+
+      // Update error message slot (only this small div changes)
+      const errorSlot = this.container.querySelector(`[data-error-for="${name}"]`);
+      if (errorSlot) {
+        errorSlot.innerHTML = hasError
+          ? `<div class="ang-error">⚠ ${f.errors[0]}</div>`
+          : '';
+      }
     });
 
-    // Bind submit
+    // 2. Patch submit button
     const submitBtn = this.container.querySelector('#ang-submit-btn');
     if (submitBtn) {
-      submitBtn.addEventListener('click', () => this.onSubmit());
+      submitBtn.disabled = !this.formService.isValid;
+      submitBtn.style.opacity = this.formService.isValid ? '1' : '0.3';
     }
 
-    // Restore focus
-    if (focusedField) {
-      const el = this.container.querySelector(`[data-field="${focusedField}"]`);
-      if (el) {
-        el.focus();
-        if (cursorPos !== undefined && el.setSelectionRange) {
-          el.setSelectionRange(cursorPos, cursorPos);
-        }
-      }
+    // 3. Patch form state display
+    const stateDisplay = this.container.querySelector('#ang-state-display');
+    if (stateDisplay) {
+      stateDisplay.innerHTML = this._renderStateRows();
     }
+  }
+
+  /**
+   * Bind event listeners ONCE via event delegation on the container.
+   * Since inputs are never destroyed, these persist across patches.
+   */
+  _bindEvents() {
+    if (this._bound) return;
+
+    // Delegated input handler
+    this.container.addEventListener('input', (e) => {
+      const field = e.target.dataset?.field;
+      if (field && this.formService.fields[field]) {
+        this.formService.setValue(field, e.target.value);
+      }
+    });
+
+    // Delegated blur handler
+    this.container.addEventListener('focusout', (e) => {
+      const field = e.target.dataset?.field;
+      if (field && this.formService.fields[field]) {
+        this.formService.markTouched(field);
+      }
+    });
+
+    // Submit button (delegated click)
+    this.container.addEventListener('click', (e) => {
+      if (e.target.id === 'ang-submit-btn' || e.target.closest('#ang-submit-btn')) {
+        this.onSubmit();
+      }
+    });
+
+    this._bound = true;
   }
 
   /**
@@ -224,7 +239,19 @@ export class FormComponent {
   onSubmit() {
     if (this.formService.isValid) {
       this.submittedData = this.formService.getData();
-      this.render();
+
+      const resultSlot = this.container.querySelector('#ang-result-slot');
+      if (resultSlot) {
+        resultSlot.innerHTML = `
+          <div class="ang-result">
+            <div class="ang-result-title">✓ Form Submitted Successfully</div>
+            <div class="ang-result-row"><span class="ang-result-key">name:</span> "${this.submittedData.name}"</div>
+            <div class="ang-result-row"><span class="ang-result-key">email:</span> "${this.submittedData.email}"</div>
+            <div class="ang-result-row"><span class="ang-result-key">subject:</span> "${this.submittedData.subject}"</div>
+            <div class="ang-result-row"><span class="ang-result-key">message:</span> "${this.submittedData.message}"</div>
+          </div>
+        `;
+      }
 
       if (window.__MFE_EVENT_BUS__) {
         window.__MFE_EVENT_BUS__.emit('angular:form-submitted', this.submittedData);
@@ -233,26 +260,31 @@ export class FormComponent {
   }
 
   /**
-   * Mount lifecycle — called when shell loads this MFE.
+   * Mount lifecycle.
    */
   onInit(container) {
     this.container = container;
 
-    // Subscribe to form changes → trigger change detection
-    this._unsubForm = this.formService.onChange(() => {
-      this.render();
-    });
+    // Initial full render (once)
+    this.container.innerHTML = this.template();
 
-    this.render();
+    // Bind delegated events (once)
+    this._bindEvents();
+
+    // Subscribe to form changes → targeted patch (not full re-render)
+    this._unsubForm = this.formService.onChange(() => {
+      this.patch();
+    });
   }
 
   /**
-   * Destroy lifecycle — called when shell unloads this MFE.
+   * Destroy lifecycle.
    */
   onDestroy() {
     if (this._unsubForm) {
       this._unsubForm();
     }
+    this._bound = false;
     this.container = null;
   }
 }

@@ -14,9 +14,19 @@
       window.__MFE_EVENT_BUS__.emit('svelte:ball-moved', { x, y });
     }
   }
+
+  function handleKeydown(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      // Move ball to center on keyboard activation
+      ballX.set(50);
+      ballY.set(50);
+      clickCount.update((c) => c + 1);
+    }
+  }
 </script>
 
-<div class="motion-box" on:click={handleClick} role="button" tabindex="0">
+<div class="motion-box" on:click={handleClick} on:keydown={handleKeydown} role="button" tabindex="0">
   <div
     class="ball"
     style="
