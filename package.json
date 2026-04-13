@@ -1,0 +1,19 @@
+{
+  "name": "micro-frontend-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-framework micro frontend architecture",
+  "scripts": {
+    "install:all": "npm install --prefix shell && npm install --prefix mfe-react && npm install --prefix mfe-vue && npm install --prefix mfe-svelte && npm install --prefix mfe-vanilla-angular",
+    "dev": "concurrently \"npm start --prefix mfe-react\" \"npm start --prefix mfe-vue\" \"npm start --prefix mfe-svelte\" \"npm start --prefix mfe-vanilla-angular\" \"npm start --prefix shell\"",
+    "build": "npm run build --prefix mfe-react && npm run build --prefix mfe-vue && npm run build --prefix mfe-svelte && npm run build --prefix mfe-vanilla-angular && npm run build --prefix shell",
+    "build:react": "npm run build --prefix mfe-react",
+    "build:vue": "npm run build --prefix mfe-vue",
+    "build:svelte": "npm run build --prefix mfe-svelte",
+    "build:angular": "npm run build --prefix mfe-vanilla-angular",
+    "build:shell": "npm run build --prefix shell"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

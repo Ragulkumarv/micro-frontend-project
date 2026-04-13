@@ -1,0 +1,263 @@
+/* ============================================================
+   ANGULAR-STYLE MFE STYLES
+   ============================================================ */
+
+.angular-app {
+  font-family: 'Sora', sans-serif;
+}
+
+.fw-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid #dd1b16;
+  color: #dd1b16;
+  background: rgba(221, 27, 22, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  color: #e4e4ef;
+}
+
+.page-sub {
+  font-size: 0.9rem;
+  color: #6b6b80;
+  margin-bottom: 2rem;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.card {
+  background: #12121a;
+  border: 1px solid #2a2a3a;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #e4e4ef;
+}
+
+.card-sub {
+  font-size: 0.72rem;
+  color: #6b6b80;
+  margin-bottom: 1.2rem;
+}
+
+/* Form fields */
+.ang-form-group {
+  margin-bottom: 1rem;
+}
+
+.ang-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6b6b80;
+  margin-bottom: 0.4rem;
+}
+
+.ang-input {
+  width: 100%;
+  background: #1a1a25;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.85rem;
+  color: #e4e4ef;
+  outline: none;
+  transition: border-color 0.3s;
+  resize: vertical;
+}
+
+.ang-input:focus {
+  border-color: #dd1b16;
+}
+
+.ang-input.invalid {
+  border-color: #dd1b16;
+}
+
+.ang-error {
+  font-size: 0.7rem;
+  color: #dd1b16;
+  margin-top: 0.35rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.ang-submit {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: #dd1b16;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.ang-submit:hover {
+  box-shadow: 0 0 25px rgba(221, 27, 22, 0.2);
+}
+
+.ang-submit:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Result */
+.ang-result {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #1a1a25;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.8;
+  border-left: 3px solid #dd1b16;
+}
+
+.ang-result-title {
+  color: #3fb950;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.ang-result-row {
+  color: #e4e4ef;
+}
+
+.ang-result-key {
+  color: #dd1b16;
+}
+
+/* Services list */
+.ang-services-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.ang-service {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 1rem;
+  background: #1a1a25;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+}
+
+.ang-service:hover {
+  background: rgba(221, 27, 22, 0.05);
+  transform: translateX(4px);
+}
+
+.ang-service-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(221, 27, 22, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.ang-service-name {
+  font-weight: 500;
+  color: #e4e4ef;
+  font-size: 0.82rem;
+}
+
+.ang-service-desc {
+  font-size: 0.7rem;
+  color: #6b6b80;
+}
+
+/* Form state display */
+.ang-form-state {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ang-state-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: #1a1a25;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+}
+
+.ang-state-field {
+  color: #e4e4ef;
+  min-width: 60px;
+}
+
+.ang-state-badge {
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  background: #2a2a3a;
+  color: #6b6b80;
+}
+
+.ang-state-badge.touched {
+  background: rgba(88, 166, 255, 0.12);
+  color: #58a6ff;
+}
+
+.ang-state-badge.valid {
+  background: rgba(63, 185, 80, 0.12);
+  color: #3fb950;
+}
+
+.ang-state-badge.invalid-badge {
+  background: rgba(221, 27, 22, 0.12);
+  color: #dd1b16;
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .page-title {
+    font-size: 1.5rem;
+  }
+}
