@@ -5,14 +5,19 @@ A micro frontend project where **each page is an independent app** built with a 
 ```
 micro-frontend-project/
 ├── shell/                    # Container app (vanilla JS) — orchestrates everything
-│   ├── index.html
-│   ├── shell.js              # Router, event bus, MFE loader
-│   └── styles.css            # Shell-level styles
+│   ├── package.json
+│   ├── src/
+│   │   ├── bootstrap.js      # Async entry (Module Federation requirement)
+│   │   ├── shell.js          # Router, event bus, MFE loader
+│   │   ├── index.html
+│   │   └── styles.css        # Shell-level styles
+│   └── webpack.config.js
 │
 ├── mfe-react/                # React 18 micro frontend
 │   ├── package.json
 │   ├── src/
-│   │   ├── index.jsx         # Bootstrap + mount/unmount lifecycle
+│   │   ├── bootstrap.js      # Async entry for standalone mode
+│   │   ├── index.jsx         # mount/unmount lifecycle (exposed to shell)
 │   │   ├── App.jsx           # Dashboard page component
 │   │   └── components/
 │   │       ├── Counter.jsx
@@ -22,7 +27,8 @@ micro-frontend-project/
 ├── mfe-vue/                  # Vue 3 micro frontend
 │   ├── package.json
 │   ├── src/
-│   │   ├── main.js           # Bootstrap + mount/unmount lifecycle
+│   │   ├── bootstrap.js      # Async entry for standalone mode
+│   │   ├── main.js           # mount/unmount lifecycle (exposed to shell)
 │   │   ├── App.vue           # Todo page component
 │   │   └── components/
 │   │       ├── TodoItem.vue
@@ -32,7 +38,8 @@ micro-frontend-project/
 ├── mfe-svelte/               # Svelte micro frontend
 │   ├── package.json
 │   ├── src/
-│   │   ├── main.js           # Bootstrap + mount/unmount lifecycle
+│   │   ├── bootstrap.js      # Async entry for standalone mode
+│   │   ├── main.js           # mount/unmount lifecycle (exposed to shell)
 │   │   ├── App.svelte        # Motion lab page
 │   │   ├── stores.js         # Svelte stores
 │   │   └── components/
@@ -43,7 +50,8 @@ micro-frontend-project/
 ├── mfe-vanilla-angular/      # Angular-style micro frontend (vanilla JS)
 │   ├── package.json
 │   ├── src/
-│   │   ├── index.js          # Bootstrap + mount/unmount lifecycle
+│   │   ├── bootstrap.js      # Async entry for standalone mode
+│   │   ├── index.js          # mount/unmount lifecycle (exposed to shell)
 │   │   ├── FormComponent.js  # Form page (Angular patterns)
 │   │   └── services/
 │   │       ├── ValidationService.js

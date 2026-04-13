@@ -3,7 +3,7 @@ const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/bootstrap.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'mfe-angular.[contenthash].js',

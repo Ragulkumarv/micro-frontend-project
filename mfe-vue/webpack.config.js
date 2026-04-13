@@ -4,7 +4,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const path = require('path');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/bootstrap.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'mfe-vue.[contenthash].js',

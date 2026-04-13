@@ -174,7 +174,26 @@ const router = {
 
     // 4. Dynamically load MFE via Module Federation
     try {
-      const module = await MFE_CONFIG[name].load();
+      const raw = await MFE_CONFIG[name].load();
+
+      // Module Federation may wrap exports differently depending on
+      // the remote's libraryType. Handle all common shapes:
+      //   - { mount, unmount }           (named exports)
+      //   - { default: { mount, unmount } }  (default export)
+      //   - { default: mount }           (default is the mount fn itself)
+      const module =
+        typeof raw.mount === 'function'
+          ? raw
+          : typeof raw.default === 'object' && typeof raw.default.mount === 'function'
+            ? raw.default
+            : null;
+
+      if (!module || typeof module.mount !== 'function') {
+        throw new Error(
+          `Remote "${name}" did not expose a mount() function. ` +
+          `Got keys: [${Object.keys(raw).join(', ')}]`
+        );
+      }
 
       viewport.innerHTML = '';
       viewport.classList.remove('loading');

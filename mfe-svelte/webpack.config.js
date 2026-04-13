@@ -3,7 +3,7 @@ const { ModuleFederationPlugin } = require('webpack').container;
 const path = require('path');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './src/bootstrap.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'mfe-svelte.[contenthash].js',
@@ -19,9 +19,6 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.svelte'],
-    alias: {
-      svelte: path.resolve('node_modules', 'svelte/src/runtime'),
-    },
     mainFields: ['svelte', 'browser', 'module', 'main'],
     conditionNames: ['svelte', 'browser', 'import'],
   },
