@@ -1,0 +1,22 @@
+.ang-label{display:block;font-family:'JetBrains Mono',monospace;font-size:0.62rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--dim);margin-bottom:0.35rem}
+.ang-input{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:0.65rem 1rem;font-family:Sora,sans-serif;font-size:0.83rem;color:var(--text);outline:none;transition:border-color 0.3s;resize:vertical}
+.ang-input:focus{border-color:var(--angular)}
+.ang-input.invalid{border-color:var(--angular)}
+.ang-error{font-size:0.68rem;color:var(--angular);margin-top:0.3rem;font-family:'JetBrains Mono',monospace}
+.ang-submit{width:100%;padding:0.75rem;border:none;border-radius:8px;background:var(--angular);color:#fff;font-family:'JetBrains Mono',monospace;font-size:0.78rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;transition:all 0.2s;margin-top:0.3rem}
+.ang-submit:hover{box-shadow:0 0 25px rgba(221,27,22,0.2)}
+.ang-submit:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none}
+.ang-result{margin-top:1.2rem;padding:1rem;background:var(--surface-2);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:0.72rem;line-height:1.8;border-left:3px solid var(--angular)}
+.ang-result-title{color:var(--green);font-weight:600;margin-bottom:0.4rem}
+.ang-result-key{color:var(--angular)}
+.ang-service{display:flex;align-items:center;gap:0.7rem;padding:0.65rem 0.9rem;background:var(--surface-2);border-radius:8px;font-size:0.8rem;transition:all 0.2s}
+.ang-service:hover{transform:translateX(4px)}
+.ang-service-icon{width:30px;height:30px;border-radius:6px;background:rgba(221,27,22,0.08);display:flex;align-items:center;justify-content:center;font-size:0.82rem;flex-shrink:0}
+.ang-service-name{font-weight:500;font-size:0.8rem}
+.ang-service-desc{font-size:0.68rem;color:var(--dim)}
+.ang-state-row{display:flex;align-items:center;gap:0.4rem;padding:0.35rem 0.6rem;background:var(--surface-2);border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.6rem}
+.ang-state-field{color:var(--text);min-width:50px}
+.ang-state-badge{padding:0.08rem 0.35rem;border-radius:3px;font-size:0.55rem;background:var(--border);color:var(--dim)}
+.ang-state-badge.touched{background:rgba(88,166,255,0.1);color:#58a6ff}
+.ang-state-badge.valid{background:rgba(63,185,80,0.1);color:var(--green)}
+.ang-state-badge.invalid-badge{background:rgba(221,27,22,0.1);color:var(--angular)}

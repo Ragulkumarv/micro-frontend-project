@@ -1,19 +1,34 @@
 {
-  "name": "micro-frontend-project",
+  "name": "micro-frontend-multi-framework",
   "version": "1.0.0",
   "private": true,
-  "description": "Multi-framework micro frontend architecture",
+  "description": "Multi-framework micro frontend app — React, Vue, Svelte, Angular-style — single build, deployable to Vercel",
   "scripts": {
-    "install:all": "npm install --prefix shell && npm install --prefix mfe-react && npm install --prefix mfe-vue && npm install --prefix mfe-svelte && npm install --prefix mfe-vanilla-angular",
-    "dev": "concurrently \"npm start --prefix mfe-react\" \"npm start --prefix mfe-vue\" \"npm start --prefix mfe-svelte\" \"npm start --prefix mfe-vanilla-angular\" \"npm start --prefix shell\"",
-    "build": "npm run build --prefix mfe-react && npm run build --prefix mfe-vue && npm run build --prefix mfe-svelte && npm run build --prefix mfe-vanilla-angular && npm run build --prefix shell",
-    "build:react": "npm run build --prefix mfe-react",
-    "build:vue": "npm run build --prefix mfe-vue",
-    "build:svelte": "npm run build --prefix mfe-svelte",
-    "build:angular": "npm run build --prefix mfe-vanilla-angular",
-    "build:shell": "npm run build --prefix shell"
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "start": "serve dist"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vue": "^3.3.4",
+    "svelte": "^4.2.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@babel/core": "^7.23.5",
+    "@babel/preset-env": "^7.23.5",
+    "@babel/preset-react": "^7.23.3",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "style-loader": "^3.3.3",
+    "svelte-loader": "^3.2.0",
+    "vue-loader": "^17.3.1",
+    "@vue/compiler-sfc": "^3.3.4",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1",
+    "serve": "^14.2.1"
   }
 }
